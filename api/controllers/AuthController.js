@@ -35,7 +35,7 @@ module.exports = {
           res.json({user: user, token: TokenAuth.issueToken(user.uuid)});
         }
       });
-    })
+    });
   },
   /**
    *

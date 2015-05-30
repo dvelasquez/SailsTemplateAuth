@@ -56,7 +56,7 @@ module.exports = {
 
   beforeCreate: function (values, next) {
     var passwordHash = require('password-hash');
-    values.password = passwordHash.generate('password123');
+    values.password = passwordHash.generate(values.password);
     next();
 
   },
@@ -67,7 +67,7 @@ module.exports = {
           return res.json(401, {err: 'invalid email or password'});
         } else {
           var passwordHash = require('password-hash');
-          values.password = passwordHash.generate('password123');
+          values.password = passwordHash.generate(values.password);
           next();
         }
       });
@@ -77,48 +77,11 @@ module.exports = {
   },
   validPassword: function (password, user, cb) {
     var passwordHash = require('password-hash');
-    if (passwordHash.verify(user.password, hashedPassword)) {
+    if (passwordHash.verify( password, user.password)) {
       cb(null, true);
     } else {
       cb(null, false);
     }
-    //bcrypt.compare(password, user.password, function (err, match) {
-    //  if (err) cb(err);
-    //
-    //  if (match) {
-    //    cb(null, true);
-    //  } else {
-    //    cb(err);
-    //  }
-    //});
-  },
-
-  afterUpdate: function (values, next) {
-    var tag = Tag.findOne(
-      {
-        where: {
-          user: values.uuid
-        },
-        sort: 'createdAt ASC'
-      },
-      function (error, tag) {
-        if (error) {
-          // do something with the error.
-          req.send(error);
-        }
-        tag.name = values.name;
-        tag.mail = values.email;
-        tag.avatar = values.avatar;
-
-        tag.save(function (error) {
-          if (error) {
-            // do something with the error.
-          } else {
-            // value saved!
-            next();
-          }
-        });
-      });
   }
 };
 
